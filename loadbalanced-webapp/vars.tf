@@ -4,23 +4,6 @@ variable region {
   default     = "ap-southeast-2"
 }
 
-variable remote_state_backend {
-  description = "source system that contains the remote state for subnets"
-  type        = "string"
-  default     = "s3"
-}
-
-variable remote_state_config {
-  description = "configuration for remote state containing subnet information. see mandatory keys for S3 below"
-  type        = "map"
-
-  default = {
-    bucket = ""
-    key    = ""
-    region = ""
-  }
-}
-
 variable cidr_range_access_to_app {
   description = "list of ip ranges in cidr notation that should be able to access the app. default is the whole internet"
   type        = "list"
@@ -35,6 +18,16 @@ variable open_ports_map {
     "80"  = 80
     "443" = 443
   }
+}
+
+variable subnet_ids {
+  description = "list of subnets where ec2 instances should be placed"
+  type = "list"
+}
+
+variable vpc_id {
+  description = "id of vpc in which resources should be created"
+  type = "string"
 }
 
 variable resource_default_tags {

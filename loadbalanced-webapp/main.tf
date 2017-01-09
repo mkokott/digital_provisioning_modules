@@ -2,7 +2,7 @@
 resource "aws_security_group" "allow_ingress_http_traffic" {
   name        = "sg_webservers"
   description = "allows incoming http & https traffic"
-  vpc_id      = "${data.terraform_remote_state.lbwa_vpc_id}"
+  vpc_id      = "${var.vpc_id}"
   tags        = "${var.resource_default_tags}"
 }
 
@@ -10,7 +10,7 @@ resource "aws_security_group" "allow_ingress_http_traffic" {
 resource "aws_security_group" "allow_egress_all_traffic" {
   name        = "sg_unrestricted_egress"
   description = "allows all outgoing traffic"
-  vpc_id      = "${data.terraform_remote_state.lbwa_vpc_id}"
+  vpc_id      = "${var.vpc_id}"
   tags        = "${var.resource_default_tags}"
 }
 
