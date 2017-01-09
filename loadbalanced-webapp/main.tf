@@ -52,8 +52,8 @@ resource "aws_autoscaling_group" "auto_scaling_group_webservers" {
 
   # ! vpc-zone := subnet-id !
   vpc_zone_identifier = ["${var.subnet_ids}"]
-  min_size            = "${element(var.number_of_instances, "min")}"
-  max_size            = "${element(var.number_of_instances, "max")}"
+  min_size            = "${lookup(var.number_of_instances, "min")}"
+  max_size            = "${lookup(var.number_of_instances, "max")}"
   load_balancers      = ["${aws_elb.elb_webservers.id}"]
   health_check_type   = "ELB"
 }
