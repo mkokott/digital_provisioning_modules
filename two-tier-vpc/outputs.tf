@@ -1,15 +1,15 @@
-output "vpc_id" {
-  value = "${aws_vpc.two-tier-vpc.id}"
+output "public_subnet_azs" {
+  value = [
+    "${aws_subnet.public-subnet.*.availability_zone}"
+  ]
 }
 
 output "public_subnet_ids" {
   value = [
-    "${aws_subnet.public-subnet.id}",
+    "${aws_subnet.public-subnet.*.id}"
   ]
 }
 
-output "public_subnet_azs" {
-  value = [
-    "${aws_subnet.public-subnet.availability_zone}",
-  ]
+output "vpc_id" {
+  value = "${aws_vpc.two-tier-vpc.id}"
 }
