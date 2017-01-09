@@ -38,7 +38,7 @@ resource "aws_security_group_rule" "egress_rules" {
 resource "aws_launch_configuration" "launch_config_webservers" {
   image_id                    = "${var.ec2_ami_id}"
   instance_type               = "${var.ec2_instance_type}"
-  security_groups             = ["${aws_security_group.allow_ingress_http_traffic}"]
+  security_groups             = ["${aws_security_group.allow_ingress_http_traffic.id}"]
   associate_public_ip_address = false
 
   lifecycle {
@@ -64,8 +64,8 @@ resource "aws_elb" "elb_webservers" {
   subnets = ["${var.subnet_ids}"]
 
   security_groups = [
-    "${aws_security_group.allow_ingress_http_traffic}",
-    "${aws_security_group.allow_egress_all_traffic}",
+    "${aws_security_group.allow_ingress_http_traffic.id}",
+    "${aws_security_group.allow_egress_all_traffic.id}",
   ]
 
   listener {
