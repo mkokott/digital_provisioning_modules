@@ -13,11 +13,3 @@ output "public_subnet_azs" {
     "${aws_subnet.public-subnet.availability_zone}",
   ]
 }
-
-output "webtier_security_group" {
-  value = "${aws_security_group.allow_ingress_http_traffic.id}"
-}
-
-output "elb_security_group" {
-  value = "${aws_security_group.allow_egress_all_traffic.id}"
-}
