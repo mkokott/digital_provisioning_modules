@@ -21,12 +21,6 @@ variable remote_state_config {
   }
 }
 
-variable public_subnets_key {
-  description = "key that contains information on public subnets in remote state configured in remote_state_config."
-  type       = "string"
-  default    = "data.terraform_remote_state.public_subnet_ids"
-}
-
 variable cidr_range_access_to_app {
   description = "list of ip ranges in cidr notation that should be able to access the app. default is the whole internet"
   type        = "list"
