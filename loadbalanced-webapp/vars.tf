@@ -25,12 +25,20 @@ variable number_of_instances {
 }
 
 variable open_ports_map {
-  description = "list of ports that will be opnened for the app. key is port to be opened, value internal port to be mapped. defaults are 80 & 443 without remapping"
+  description = "list of ports that will be opnened for the app. key is port to be opened, value internal port to be mapped. opens port 80 by default"
   type        = "map"
 
   default = {
-    "80"  = 80
-    "443" = 443
+    "80" = 80
+  }
+}
+
+variable "protocols_map" {
+  description = "contains a mapping of ports to protocol expected at that port. maps port 80 to HTTP traffic by default"
+  type        = "map"
+
+  default = {
+    "80" = "HTTP"
   }
 }
 

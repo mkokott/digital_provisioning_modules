@@ -54,32 +54,41 @@ resource "aws_autoscaling_group" "auto_scaling_group_webservers" {
   vpc_zone_identifier = ["${var.subnet_ids}"]
   min_size            = "${lookup(var.number_of_instances, "min")}"
   max_size            = "${lookup(var.number_of_instances, "max")}"
-  load_balancers      = ["${aws_elb.elb_webservers.id}"]
+  target_group_arns   = ["${aws_alb_target_group.elb_webservers_target_group.*.arn}"]
   health_check_type   = "ELB"
 }
 
-# elastic load balancer for web servers
-resource "aws_elb" "elb_webservers" {
-  name    = "webservers-elb"
-  subnets = ["${var.subnet_ids}"]
+resource "aws_alb" "elb_webservers" {
+  name_prefix = "elb"
 
   security_groups = [
     "${aws_security_group.allow_ingress_http_traffic.id}",
     "${aws_security_group.allow_egress_all_traffic.id}",
   ]
 
-  listener {
-    lb_port           = 80
-    lb_protocol       = "http"
-    instance_port     = 80
-    instance_protocol = "http"
-  }
+  subnets = ["${var.subnet_ids}"]
+  tags    = "${var.resource_default_tags}"
+}
 
-  health_check {
-    healthy_threshold   = 2
-    unhealthy_threshold = 2
-    timeout             = 3
-    interval            = 30
-    target              = "HTTP:80/"
+resource "aws_alb_listener" "elb_webservers_listener" {
+  count             = "${length(keys(var.open_ports_map))}"
+  load_balancer_arn = "${aws_alb.elb_webservers.arn}"
+  port              = "${lookup(var.open_ports_map, element(keys(var.open_ports_map), count.index))}"
+
+  # protocol = "${lookup(var.protocols_map, element(keys(var.open_ports_map), count.index))} == HTTPS ? HTTPS : HTTP}"
+  default_action = {
+    type             = "forward"
+    target_group_arn = "${element(aws_alb_target_group.elb_webservers_target_group.*.arn, count.index)}"
   }
+}
+
+resource "aws_alb_target_group" "elb_webservers_target_group" {
+  count  = "${length(keys(var.open_ports_map))}"
+  name   = "webservers-group-${lookup(var.open_ports_map, element(keys(var.open_ports_map), count.index))}"
+  vpc_id = "${var.vpc_id}"
+  port   = "${lookup(var.open_ports_map, element(keys(var.open_ports_map), count.index))}"
+
+  # protocol = "${lookup(var.protocols_map, element(keys(var.open_ports_map), count.index))} == HTTPS ? HTTPS : HTTP}"
+  protocol = "HTTP"
+  tags     = "${var.resource_default_tags}"
 }
